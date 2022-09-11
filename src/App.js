@@ -6,6 +6,7 @@ import { ExportReactCSV } from "./ExportReactCSV";
 import Button from "react-bootstrap/Button";
 import moment from "moment";
 var base64 = require("base-64");
+const cors = require("cors");
 
 const username = "karenfapi";
 const password = "08SruEA3pyK%";
@@ -35,9 +36,14 @@ class App extends React.Component {
         "https://tandg.mybiotime.com/api/pay?filter=wlevel1 eq 2200",
         {
           method: "GET",
-          mode: "no-cors",
+          //mode: "cors",
           headers: {
             Authorization: "Basic " + base64.encode(username + ":" + password),
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "Access-Control-Allow-Headers":
+              "Origin, X-Requested-With, Content-Type, Accept",
           },
         }
       );
