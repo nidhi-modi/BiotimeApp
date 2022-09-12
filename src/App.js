@@ -11,29 +11,69 @@ const cors = require("cors");
 const username = "karenfapi";
 const password = "08SruEA3pyK%";
 var weekNum, lastWeekNum;
+var wholeData = [];
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      employees: [],
+      fileName: "Employees",
+      dataList: [],
+    };
+  }
+
   employees = () => {
-    let custs = [];
-    for (let i = 0; i <= 25; i++) {
-      custs.push({
-        date: `date${i}`,
-        employeenumber: `number${i}`,
-        employeename: `name${i}`,
-        hcostcentre: `000${i}12`,
-        paycodeid: `REG${i}`,
-        start: `01/02/${i}`,
-        finish: `05/08/${i}`,
-        hours: `1${i}`,
+    let emp = [];
+
+    this.state.dataList.map((emps) => {
+      emp.push({
+        date: moment(emps.date).format("yyyy-MM-DD, h:mm:ss a"),
+        employeenumber: emps.employeepayrollnumber,
+        employeename: emps.employeename,
+        hcostcentre: emps.wlevel2description,
+        paycodeid: emps.paycodeid,
+        start: moment(emps.start).format("h:mm:ss a"),
+        finish: moment(emps.finish).format("h:mm:ss a"),
+        hours: this.totalHours(emps.start, emps.finish),
       });
+    });
+
+    this.setState({
+      employees: emp,
+    });
+
+    return emp;
+  };
+
+  totalHours = (startDate, endDate) => {
+    var exactHoursWorked;
+
+    const start = moment(startDate, "yyyy-MM-DD, h:mm:ss A");
+
+    const end = moment(endDate, "yyyy-MM-DD, h:mm:ss A");
+
+    const TotalSeconds = end.diff(start, "seconds");
+
+    var hours = Math.floor(TotalSeconds / 3600);
+    var minutes = Math.floor((TotalSeconds / 60) % 60);
+
+    if (minutes !== 0) {
+      exactHoursWorked = hours + "." + minutes;
+    } else if (hours !== 0) {
+      exactHoursWorked = hours;
+    } else {
+      exactHoursWorked = minutes;
     }
-    return custs;
+
+    return exactHoursWorked;
   };
 
   getEmployees = async (startDate, endDate) => {
     try {
       const response = await fetch(
-        "https://tandg.mybiotime.com/api/pay?filter=wlevel1 eq 2200",
+        `https://tandg.mybiotime.com/api/pay?filter=wlevel1 eq 2200 and date ge '${startDate}' and date le '${endDate}'`,
         {
           method: "GET",
           //mode: "cors",
@@ -49,8 +89,11 @@ class App extends React.Component {
       );
 
       const data = await response.json();
-
-      console.log(data);
+      wholeData = data.Data;
+      this.setState({
+        dataList: wholeData,
+      });
+      console.log(wholeData);
     } catch (error) {
       console.error(error);
     } finally {
@@ -109,11 +152,6 @@ class App extends React.Component {
     lastWeekNum = lastWeekNumber;
   }
 
-  state = {
-    employees: this.employees(),
-    fileName: "Employees",
-  };
-
   render() {
     return (
       <div className="App">
@@ -152,7 +190,13 @@ class App extends React.Component {
             />
           </div>
         </div>
-        <Employees employees={this.employees()} />
+        {this.state.dataList.length > 0 ? (
+          <Employees employees={this.employees()} />
+        ) : (
+          <h4 className="loading-data">
+            Select week number to load data here...
+          </h4>
+        )}
       </div>
     );
   }

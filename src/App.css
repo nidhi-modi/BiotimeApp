@@ -65,3 +65,9 @@ h3
 .btnSize {
   width: 140px;
 }
+
+.loading-data {
+  align-self: center;
+  text-align: center;
+  color: #EA4335;
+}
