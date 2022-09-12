@@ -20,10 +20,19 @@ class App extends React.Component {
 
     this.state = {
       employees: [],
-      fileName: "Employees",
+      fileName: "",
       dataList: [],
       setLoading: false,
     };
+  }
+
+  componentDidMount() {
+    const fileNameWithTimestamp =
+      "Biotime-" + moment(new Date()).format("DD/MM/yyyy-HH:mm");
+
+    this.setState({
+      fileName: fileNameWithTimestamp,
+    });
   }
 
   employees = () => {
@@ -212,12 +221,14 @@ class App extends React.Component {
             <br />
             <br />
             <br />
-            <div className="col-md-4 center">
-              <ExportReactCSV
-                csvData={this.state.employees}
-                fileName={this.state.fileName}
-              />
-            </div>
+            {this.state.dataList.length > 0 ? (
+              <div className="col-md-4 center">
+                <ExportReactCSV
+                  csvData={this.state.employees}
+                  fileName={this.state.fileName}
+                />
+              </div>
+            ) : null}
           </div>
         )}
         <div>
