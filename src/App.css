@@ -71,3 +71,11 @@ h3
   text-align: center;
   color: #EA4335;
 }
+
+.override {
+  display: block;
+  margin: 0 auto;
+  border-color: red;
+  align-self: center;
+  text-align: center;
+}

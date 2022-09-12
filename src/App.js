@@ -4,6 +4,7 @@ import { Employees } from "./Employees";
 import { Header } from "./Header";
 import { ExportReactCSV } from "./ExportReactCSV";
 import Button from "react-bootstrap/Button";
+import ClipLoader from "react-spinners/ClipLoader";
 import moment from "moment";
 var base64 = require("base-64");
 const cors = require("cors");
@@ -21,6 +22,7 @@ class App extends React.Component {
       employees: [],
       fileName: "Employees",
       dataList: [],
+      setLoading: false,
     };
   }
 
@@ -71,6 +73,9 @@ class App extends React.Component {
   };
 
   getEmployees = async (startDate, endDate) => {
+    this.setState({
+      isLoading: true,
+    });
     try {
       const response = await fetch(
         `https://tandg.mybiotime.com/api/pay?filter=wlevel1 eq 2200 and date ge '${startDate}' and date le '${endDate}'`,
@@ -87,20 +92,31 @@ class App extends React.Component {
           },
         }
       );
-
+      this.setState({
+        isLoading: true,
+      });
       const data = await response.json();
       wholeData = data.Data;
       this.setState({
         dataList: wholeData,
       });
       console.log(wholeData);
+      this.setState({
+        isLoading: false,
+      });
     } catch (error) {
       console.error(error);
+      this.setState({
+        isLoading: false,
+      });
     } finally {
     }
   };
 
   getDateFromLastWeek() {
+    this.setState({
+      isLoading: true,
+    });
     var weekNumber = moment().week() - 3;
     var yearNumber = moment().year();
 
@@ -115,6 +131,9 @@ class App extends React.Component {
   }
 
   getDateFromThisWeek() {
+    this.setState({
+      isLoading: true,
+    });
     var weekNumber = moment().week() - 2;
     var yearNumber = moment().year();
 
@@ -156,47 +175,60 @@ class App extends React.Component {
     return (
       <div className="App">
         <Header />
-        <div className="row">
-          <div className="col-md-8">
-            <h3>Select Week Number : </h3> &nbsp;&nbsp;&nbsp;
-            <text onClick={this.getWeekNumbers()}></text>
-            <Button
-              className="btnSize"
-              variant="success"
-              size="lg"
-              active
-              onClick={() => this.getDateFromLastWeek()}
-            >
-              {weekNum}
-            </Button>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <Button
-              className="btnSize"
-              variant="success"
-              size="lg"
-              active
-              onClick={() => this.getDateFromThisWeek()}
-            >
-              {lastWeekNum}
-            </Button>
-          </div>
-          <br />
-          <br />
-          <br />
-          <div className="col-md-4 center">
-            <ExportReactCSV
-              csvData={this.state.employees}
-              fileName={this.state.fileName}
+        {this.state.isLoading ? (
+          <div className="loading-data">
+            <ClipLoader
+              color={"#ff0000"}
+              loading={this.state.isLoading}
+              className="override"
+              size={80}
             />
           </div>
-        </div>
-        {this.state.dataList.length > 0 ? (
-          <Employees employees={this.employees()} />
         ) : (
-          <h4 className="loading-data">
-            Select week number to load data here...
-          </h4>
+          <div className="row">
+            <div className="col-md-8">
+              <h3>Select Week Number : </h3> &nbsp;&nbsp;&nbsp;
+              <text onClick={this.getWeekNumbers()}></text>
+              <Button
+                className="btnSize"
+                variant="success"
+                size="lg"
+                active
+                onClick={() => this.getDateFromLastWeek()}
+              >
+                {weekNum}
+              </Button>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button
+                className="btnSize"
+                variant="success"
+                size="lg"
+                active
+                onClick={() => this.getDateFromThisWeek()}
+              >
+                {lastWeekNum}
+              </Button>
+            </div>
+            <br />
+            <br />
+            <br />
+            <div className="col-md-4 center">
+              <ExportReactCSV
+                csvData={this.state.employees}
+                fileName={this.state.fileName}
+              />
+            </div>
+          </div>
         )}
+        <div>
+          {this.state.dataList.length > 0 ? (
+            <Employees employees={this.employees()} />
+          ) : this.state.isLoading ? null : (
+            <h4 className="loading-data">
+              Select week number to load data here...
+            </h4>
+          )}
+        </div>
       </div>
     );
   }
