@@ -1,17 +1,22 @@
-import React from "react";
+import React, { Component } from "react";
 import "./App.css";
 import { Employees } from "./Employees";
 import { Header } from "./Header";
+import { CSVLink } from "react-csv";
 import { ExportReactCSV } from "./ExportReactCSV";
+import { ExportInCSV } from "./ExportCSV";
 import Button from "react-bootstrap/Button";
 import ClipLoader from "react-spinners/ClipLoader";
+import schedule from "node-schedule";
 import moment from "moment";
+import Crontab from "reactjs-crontab";
+import "reactjs-crontab/dist/index.css";
 var base64 = require("base-64");
 const cors = require("cors");
 
 const username = "karenfapi";
 const password = "08SruEA3pyK%";
-var weekNum, lastWeekNum;
+var weekNum, lastWeekNum, currentWeekNumber;
 var wholeData = [];
 
 class App extends React.Component {
@@ -22,18 +27,54 @@ class App extends React.Component {
       employees: [],
       fileName: "",
       dataList: [],
-      setLoading: false,
+      isLoading: false,
     };
   }
 
   componentDidMount() {
     const fileNameWithTimestamp =
-      "Biotime-" + moment(new Date()).format("DD/MM/yyyy-HH:mm");
+      "Biotime-" +
+      currentWeekNumber +
+      "-" +
+      moment(new Date()).format("dddd-HH:mm");
 
     this.setState({
       fileName: fileNameWithTimestamp,
     });
+
+    //DEMO
+
+    const currentTime = new Date().getTime(); //current unix timestamp
+    const execTime = new Date().setHours(16, 17, 0, 0); //API call time = today at 20:00
+
+    let timeLeft;
+    if (currentTime < execTime) {
+      //it's currently earlier than 20:00
+      timeLeft = execTime - currentTime;
+    } else {
+      //it's currently later than 20:00, schedule for tomorrow at 20:00
+      timeLeft = execTime + 86400000 - currentTime;
+    }
+    setTimeout(() => {
+      this.gettingStarted();
+    }, timeLeft);
+
+    console.log(timeLeft);
   }
+
+  gettingStarted = () => {
+    var weekNumber = moment().week() - 1;
+    var yearNumber = moment().year();
+
+    //2016-01-01
+    const startDate = this.getStartDateOfWeek(weekNumber, yearNumber);
+    const endDate = this.getEndDateOfWeek(weekNumber, yearNumber);
+
+    const formattedStartDate = moment(startDate).format("yyyy-MM-DD");
+    const formattedEndDate = moment(endDate).format("yyyy-MM-DD");
+
+    this.getEmployees(formattedStartDate, formattedEndDate);
+  };
 
   employees = () => {
     let emp = [];
@@ -83,13 +124,16 @@ class App extends React.Component {
 
   getEmployees = async (startDate, endDate) => {
     this.setState({
-      isLoading: true,
+      isLoading: false,
     });
+
+    const abortController = new AbortController();
     try {
       const response = await fetch(
-        `https://tandg.mybiotime.com/api/pay?filter=wlevel1 eq 2200 and date ge '${startDate}' and date le '${endDate}'`,
+        `https://tandg.mybiotime.com/api/pay?filter=wlevel1 eq 2200 and date ge '${startDate}' and date le '${endDate}' and wcostcentre in('36412','36411','36416','36417')`,
         {
           method: "GET",
+          signal: abortController.signal,
           //mode: "cors",
           headers: {
             Authorization: "Basic " + base64.encode(username + ":" + password),
@@ -101,18 +145,16 @@ class App extends React.Component {
           },
         }
       );
-      this.setState({
-        isLoading: true,
-      });
+
       const data = await response.json();
       wholeData = data.Data;
       this.setState({
         dataList: wholeData,
-      });
-      console.log(wholeData);
-      this.setState({
         isLoading: false,
       });
+      console.log(wholeData);
+
+      document.getElementById("mainButtonClicked").click();
     } catch (error) {
       console.error(error);
       this.setState({
@@ -120,11 +162,16 @@ class App extends React.Component {
       });
     } finally {
     }
+
+    return () => {
+      // this will cancel the fetch request when the effect is unmounted
+      abortController.abort();
+    };
   };
 
   getDateFromLastWeek() {
     this.setState({
-      isLoading: true,
+      isLoading: false,
     });
     var weekNumber = moment().week() - 3;
     var yearNumber = moment().year();
@@ -141,7 +188,7 @@ class App extends React.Component {
 
   getDateFromThisWeek() {
     this.setState({
-      isLoading: true,
+      isLoading: false,
     });
     var weekNumber = moment().week() - 2;
     var yearNumber = moment().year();
@@ -178,12 +225,14 @@ class App extends React.Component {
 
     weekNum = thisWeekNumber;
     lastWeekNum = lastWeekNumber;
+    currentWeekNumber = completeWeekNumber;
   }
 
   render() {
     return (
       <div className="App">
         <Header />
+
         {this.state.isLoading ? (
           <div className="loading-data">
             <ClipLoader
@@ -192,43 +241,33 @@ class App extends React.Component {
               className="override"
               size={80}
             />
+            <h4 className="loading-data">Loading data please wait...</h4>
           </div>
         ) : (
           <div className="row">
             <div className="col-md-8">
-              <h3>Select Week Number : </h3> &nbsp;&nbsp;&nbsp;
-              <text onClick={this.getWeekNumbers()}></text>
-              <Button
-                className="btnSize"
-                variant="success"
-                size="lg"
-                active
-                onClick={() => this.getDateFromLastWeek()}
-              >
-                {weekNum}
-              </Button>
+              <h3>Current Week Number : </h3>{" "}
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <Button
-                className="btnSize"
-                variant="success"
-                size="lg"
-                active
-                onClick={() => this.getDateFromThisWeek()}
-              >
-                {lastWeekNum}
+              <text onClick={this.getWeekNumbers()}></text>
+              <Button className="btnSize" variant="success" size="lg">
+                {currentWeekNumber}
               </Button>
             </div>
             <br />
             <br />
             <br />
-            {this.state.dataList.length > 0 ? (
-              <div className="col-md-4 center">
-                <ExportReactCSV
-                  csvData={this.state.employees}
-                  fileName={this.state.fileName}
-                />
-              </div>
-            ) : null}
+
+            <div className="col-md-4 center">
+              <Button variant="warning" size="lg">
+                <CSVLink
+                  data={this.state.employees}
+                  filename={this.state.fileName}
+                  id="mainButtonClicked"
+                >
+                  Export Data
+                </CSVLink>
+              </Button>
+            </div>
           </div>
         )}
         <div>
@@ -236,7 +275,7 @@ class App extends React.Component {
             <Employees employees={this.employees()} />
           ) : this.state.isLoading ? null : (
             <h4 className="loading-data">
-              Select week number to load data here...
+              Data will be reloaded at 12 am, Please leave this page open.
             </h4>
           )}
         </div>
