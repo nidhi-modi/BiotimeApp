@@ -41,7 +41,7 @@ class App extends React.Component {
     //DEMO
 
     const currentTime = new Date().getTime(); //current unix timestamp
-    const execTime = new Date().setHours(9, 55, 0, 0); //API call time = today at 24:00
+    const execTime = new Date().setHours(10, 2, 0, 0); //API call time = today at 24:00
 
     let timeLeft;
     if (currentTime < execTime) {
@@ -148,7 +148,7 @@ class App extends React.Component {
       });
       console.log(wholeData);
 
-      if (this.state.dataList.length > 0) {
+      if (wholeData.length > 0) {
         document.getElementById("mainButtonClicked").click();
       }
     } catch (error) {
