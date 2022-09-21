@@ -41,7 +41,7 @@ class App extends React.Component {
     //DEMO
 
     const currentTime = new Date().getTime(); //current unix timestamp
-    const execTime = new Date().setHours(10, 12, 0, 0); //API call time = today at 24:00
+    const execTime = new Date().setHours(10, 18, 0, 0); //API call time = today at 24:00
 
     let timeLeft;
     if (currentTime < execTime) {
