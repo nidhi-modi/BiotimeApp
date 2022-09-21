@@ -41,7 +41,7 @@ class App extends React.Component {
     //DEMO
 
     const currentTime = new Date().getTime(); //current unix timestamp
-    const execTime = new Date().setHours(10, 18, 0, 0); //API call time = today at 24:00
+    const execTime = new Date().setHours(10, 30, 0, 0); //API call time = today at 24:00
 
     let timeLeft;
     if (currentTime < execTime) {
@@ -91,8 +91,6 @@ class App extends React.Component {
     this.setState({
       employees: emp,
     });
-
-    document.getElementById("mainButtonClicked").click();
 
     return emp;
   };
@@ -150,9 +148,11 @@ class App extends React.Component {
       });
       console.log("RAW DATA : " + wholeData);
 
-      //if (wholeData.length > 0) {
-
-      // }
+      setTimeout(function () {
+        if (this.state.dataList.length > 0) {
+          document.getElementById("mainButtonClicked").click();
+        }
+      }, 2000);
     } catch (error) {
       console.error(error);
       this.setState({
