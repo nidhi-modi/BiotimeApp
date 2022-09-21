@@ -32,11 +32,7 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    const fileNameWithTimestamp =
-      "Biotime-" +
-      currentWeekNumber +
-      "-" +
-      moment(new Date()).format("dddd-HH:mm");
+    const fileNameWithTimestamp = "Biotime-" + currentWeekNumber;
 
     this.setState({
       fileName: fileNameWithTimestamp,
@@ -45,7 +41,7 @@ class App extends React.Component {
     //DEMO
 
     const currentTime = new Date().getTime(); //current unix timestamp
-    const execTime = new Date().setHours(16, 17, 0, 0); //API call time = today at 20:00
+    const execTime = new Date().setHours(0, 0, 0, 0); //API call time = today at 24:00
 
     let timeLeft;
     if (currentTime < execTime) {
@@ -127,13 +123,11 @@ class App extends React.Component {
       isLoading: false,
     });
 
-    const abortController = new AbortController();
     try {
       const response = await fetch(
         `https://tandg.mybiotime.com/api/pay?filter=wlevel1 eq 2200 and date ge '${startDate}' and date le '${endDate}' and wcostcentre in('36412','36411','36416','36417')`,
         {
           method: "GET",
-          signal: abortController.signal,
           //mode: "cors",
           headers: {
             Authorization: "Basic " + base64.encode(username + ":" + password),
@@ -154,7 +148,9 @@ class App extends React.Component {
       });
       console.log(wholeData);
 
-      document.getElementById("mainButtonClicked").click();
+      if (this.state.dataList.length > 0) {
+        document.getElementById("mainButtonClicked").click();
+      }
     } catch (error) {
       console.error(error);
       this.setState({
@@ -162,11 +158,6 @@ class App extends React.Component {
       });
     } finally {
     }
-
-    return () => {
-      // this will cancel the fetch request when the effect is unmounted
-      abortController.abort();
-    };
   };
 
   getDateFromLastWeek() {

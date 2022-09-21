@@ -19,6 +19,7 @@
     "react-scripts": "5.0.1",
     "react-spinners": "^0.13.4",
     "reactjs-crontab": "^4.5.0",
+    "sp-pnp-js": "^3.0.10",
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5"
   },
