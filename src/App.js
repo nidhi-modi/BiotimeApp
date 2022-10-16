@@ -28,14 +28,25 @@ class App extends React.Component {
       fileName: "",
       dataList: [],
       isLoading: false,
+      isoWeek: "",
     };
   }
 
   componentDidMount() {
+    var weekNumber = moment().week() - 1;
+    var yearNumber = moment().year();
+    var toText = yearNumber.toString(); //convert to string
+    var lastChar = toText.slice(-2); //gets last character
+    var lastDigit = +lastChar; //convert last character to number
+    var weekNumberText = lastDigit + "00";
+    var convertWeekNumber = +weekNumberText;
+    var completeWeekNumber = convertWeekNumber + weekNumber;
+
     const fileNameWithTimestamp = "Biotime-" + currentWeekNumber;
 
     this.setState({
       fileName: fileNameWithTimestamp,
+      isoWeek: completeWeekNumber,
     });
 
     //DEMO
@@ -78,6 +89,7 @@ class App extends React.Component {
     this.state.dataList.map((emps) => {
       emp.push({
         date: moment(emps.date).format("yyyy-MM-DD, h:mm:ss a"),
+        ISOWeek: this.state.isoWeek,
         employeenumber: emps.employeepayrollnumber,
         employeename: emps.employeename,
         hcostcentre: emps.wlevel2description,

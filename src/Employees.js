@@ -7,6 +7,7 @@ export const Employees = ({ employees }) => {
       <tr key={index} className="even">
         <td> {index + 1} </td>
         <td>{employee.date}</td>
+        <td>{employee.ISOWeek}</td>
         <td>{employee.employeenumber}</td>
         <td>{employee.employeename}</td>
         <td>{employee.hcostcentre}</td>
@@ -27,6 +28,7 @@ export const Employees = ({ employees }) => {
       <tr>
         <th>#</th>
         <th>Date</th>
+        <th>ISO Week</th>
         <th>Employee Number</th>
         <th>Name</th>
         <th>Department</th>
