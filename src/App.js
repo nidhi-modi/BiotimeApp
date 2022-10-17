@@ -18,6 +18,7 @@ const username = "karenfapi";
 const password = "08SruEA3pyK%";
 var weekNum, lastWeekNum, currentWeekNumber;
 var wholeData = [];
+var payCodeWholeData = [];
 
 class App extends React.Component {
   constructor(props) {
@@ -27,8 +28,10 @@ class App extends React.Component {
       employees: [],
       fileName: "",
       dataList: [],
+      paycodeList: [],
       isLoading: false,
       isoWeek: "",
+      isManualButtonLoading: false,
     };
   }
 
@@ -66,10 +69,13 @@ class App extends React.Component {
       this.gettingStarted();
     }, timeLeft);
 
-    console.log(timeLeft);
+    //console.log(timeLeft);
   }
 
   gettingStarted = () => {
+    //Loading for button
+    this.setState({ isManualButtonLoading: true });
+
     var weekNumber = moment().week() - 1;
     var yearNumber = moment().year();
 
@@ -93,7 +99,7 @@ class App extends React.Component {
         employeenumber: emps.employeepayrollnumber,
         employeename: emps.employeename,
         hcostcentre: emps.wlevel2description,
-        paycodeid: emps.paycodeid,
+        paycodeid: this.getPayCode(emps.type, emps.code),
         start: moment(emps.start).format("h:mm:ss a"),
         finish: moment(emps.finish).format("h:mm:ss a"),
         hours: this.totalHours(emps.start, emps.finish),
@@ -105,6 +111,25 @@ class App extends React.Component {
     });
 
     return emp;
+  };
+
+  getPayCode = (type, code) => {
+    var payCodeID = "";
+    var idName = "";
+
+    if (type === "") {
+      payCodeID = code;
+    } else {
+      payCodeID = type + "|" + code;
+    }
+
+    this.state.paycodeList.filter((payId) => {
+      if (payId.transfercode === payCodeID) {
+        idName = payId.name;
+      }
+    });
+
+    return idName;
   };
 
   totalHours = (startDate, endDate) => {
@@ -133,8 +158,46 @@ class App extends React.Component {
   getEmployees = async (startDate, endDate) => {
     this.setState({
       isLoading: false,
+      isManualButtonLoading: true,
     });
 
+    try {
+      const paycodeResponse = await fetch(
+        `https://tandg.mybiotime.com/api/paycode`,
+        {
+          method: "GET",
+          //mode: "cors",
+          headers: {
+            Authorization: "Basic " + base64.encode(username + ":" + password),
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "Access-Control-Allow-Headers":
+              "Origin, X-Requested-With, Content-Type, Accept",
+          },
+        }
+      );
+
+      const paycodeData = await paycodeResponse.json();
+      payCodeWholeData = paycodeData.Data;
+      this.setState({
+        paycodeList: payCodeWholeData,
+        isLoading: true,
+        isManualButtonLoading: true,
+      });
+    } catch (error) {
+      console.error(error);
+      this.setState({
+        isLoading: false,
+        isManualButtonLoading: false,
+      });
+    } finally {
+    }
+
+    //PAYCODE
+    this.setState({
+      isManualButtonLoading: true,
+    });
     try {
       const response = await fetch(
         `https://tandg.mybiotime.com/api/pay?filter=wlevel1 eq 2200 and date ge '${startDate}' and date le '${endDate}' and wcostcentre in('36412','36411','36416','36417')`,
@@ -157,16 +220,22 @@ class App extends React.Component {
       this.setState({
         dataList: wholeData,
         isLoading: false,
+        isManualButtonLoading: false,
       });
-      //console.log("RAW DATA : " + wholeData);
 
       setTimeout(function () {
         document.getElementById("mainButtonClicked").click();
-      }, 2000);
+      }, 1000);
+
+      //REFRESH PAGE AFTER 15 Sec
+      setTimeout(function () {
+        window.location.reload();
+      }, 15000);
     } catch (error) {
       console.error(error);
       this.setState({
         isLoading: false,
+        isManualButtonLoading: false,
       });
     } finally {
     }
@@ -254,6 +323,23 @@ class App extends React.Component {
               <text onClick={this.getWeekNumbers()}></text>
               <Button className="btnSize" variant="success" size="lg">
                 {currentWeekNumber}
+              </Button>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <Button
+                variant="dark"
+                size="lg"
+                disabled={this.state.isManualButtonLoading}
+                onClick={() =>
+                  !this.state.isManualButtonLoading
+                    ? this.gettingStarted()
+                    : null
+                }
+              >
+                {this.state.isManualButtonLoading
+                  ? "Loading..."
+                  : "Manual Export"}
               </Button>
             </div>
             <br />
