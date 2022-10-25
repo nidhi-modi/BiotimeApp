@@ -55,7 +55,7 @@ class App extends React.Component {
     //DEMO
 
     const currentTime = new Date().getTime(); //current unix timestamp
-    const execTime = new Date().setHours(13, 10, 0, 0); //API call time = today at 24:00
+    const execTime = new Date().setHours(13, 15, 0, 0); //API call time = today at 24:00
 
     let timeLeft;
     if (currentTime < execTime) {
@@ -327,9 +327,9 @@ class App extends React.Component {
         isLoading: false,
       });
 
-      //setTimeout(function () {
-      document.getElementById("mainButtonClicked").click();
-      //  }, 1000);
+      setTimeout(function () {
+        document.getElementById("mainButtonClicked").click();
+      }, 1000);
 
       //REFRESH PAGE AFTER 15 Sec
       setTimeout(function () {
