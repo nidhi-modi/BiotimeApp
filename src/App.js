@@ -55,7 +55,7 @@ class App extends React.Component {
     //DEMO
 
     const currentTime = new Date().getTime(); //current unix timestamp
-    const execTime = new Date().setHours(0, 0, 0, 0); //API call time = today at 24:00
+    const execTime = new Date().setHours(13, 10, 0, 0); //API call time = today at 24:00
 
     let timeLeft;
     if (currentTime < execTime) {
@@ -69,10 +69,26 @@ class App extends React.Component {
       this.gettingStarted();
     }, timeLeft);
 
-    //console.log(timeLeft);
+    console.log(timeLeft);
   }
 
   gettingStarted = () => {
+    //Loading for button
+    this.setState({ isLoading: true });
+    var weekNumber = moment().week() - 1;
+    var yearNumber = moment().year();
+
+    //2016-01-01
+    const startDate = this.getStartDateOfWeek(weekNumber, yearNumber);
+    const endDate = this.getEndDateOfWeek(weekNumber, yearNumber);
+
+    const formattedStartDate = moment(startDate).format("yyyy-MM-DD");
+    const formattedEndDate = moment(endDate).format("yyyy-MM-DD");
+
+    this.getEmployees(formattedStartDate, formattedEndDate);
+  };
+
+  gettingManuallyStarted = () => {
     //Loading for button
     this.setState({ isManualButtonLoading: true });
 
@@ -86,7 +102,7 @@ class App extends React.Component {
     const formattedStartDate = moment(startDate).format("yyyy-MM-DD");
     const formattedEndDate = moment(endDate).format("yyyy-MM-DD");
 
-    this.getEmployees(formattedStartDate, formattedEndDate);
+    this.getManuallyEmployees(formattedStartDate, formattedEndDate);
   };
 
   employees = () => {
@@ -143,21 +159,31 @@ class App extends React.Component {
 
     var hours = Math.floor(TotalSeconds / 3600);
     var minutes = Math.floor((TotalSeconds / 60) % 60);
+    var manualMinutes;
+
+    if (minutes === 15) {
+      manualMinutes = 25;
+    } else if (minutes === 30) {
+      manualMinutes = 50;
+    } else if (minutes === 45) {
+      manualMinutes = 75;
+    } else {
+      manualMinutes = 0;
+    }
 
     if (minutes !== 0) {
-      exactHoursWorked = hours + "." + minutes;
+      exactHoursWorked = hours + "." + manualMinutes;
     } else if (hours !== 0) {
       exactHoursWorked = hours;
     } else {
-      exactHoursWorked = minutes;
+      exactHoursWorked = manualMinutes;
     }
 
     return exactHoursWorked;
   };
 
-  getEmployees = async (startDate, endDate) => {
+  getManuallyEmployees = async (startDate, endDate) => {
     this.setState({
-      isLoading: false,
       isManualButtonLoading: true,
     });
 
@@ -182,13 +208,11 @@ class App extends React.Component {
       payCodeWholeData = paycodeData.Data;
       this.setState({
         paycodeList: payCodeWholeData,
-        isLoading: true,
         isManualButtonLoading: true,
       });
     } catch (error) {
       console.error(error);
       this.setState({
-        isLoading: false,
         isManualButtonLoading: false,
       });
     } finally {
@@ -219,7 +243,6 @@ class App extends React.Component {
       wholeData = data.Data;
       this.setState({
         dataList: wholeData,
-        isLoading: false,
         isManualButtonLoading: false,
       });
 
@@ -234,8 +257,88 @@ class App extends React.Component {
     } catch (error) {
       console.error(error);
       this.setState({
-        isLoading: false,
         isManualButtonLoading: false,
+      });
+    } finally {
+    }
+  };
+
+  getEmployees = async (startDate, endDate) => {
+    this.setState({
+      isLoading: false,
+    });
+
+    try {
+      const paycodeResponse = await fetch(
+        `https://tandg.mybiotime.com/api/paycode`,
+        {
+          method: "GET",
+          //mode: "cors",
+          headers: {
+            Authorization: "Basic " + base64.encode(username + ":" + password),
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "Access-Control-Allow-Headers":
+              "Origin, X-Requested-With, Content-Type, Accept",
+          },
+        }
+      );
+
+      const paycodeData = await paycodeResponse.json();
+      payCodeWholeData = paycodeData.Data;
+      this.setState({
+        paycodeList: payCodeWholeData,
+        isLoading: true,
+      });
+    } catch (error) {
+      console.error(error);
+      this.setState({
+        isLoading: false,
+      });
+    } finally {
+    }
+
+    //PAYCODE
+    this.setState({
+      isLoading: true,
+    });
+    try {
+      const response = await fetch(
+        `https://tandg.mybiotime.com/api/pay?filter=wlevel1 eq 2200 and date ge '${startDate}' and date le '${endDate}' and wcostcentre in('36412','36411','36416','36417')`,
+        {
+          method: "GET",
+          //mode: "cors",
+          headers: {
+            Authorization: "Basic " + base64.encode(username + ":" + password),
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "Access-Control-Allow-Headers":
+              "Origin, X-Requested-With, Content-Type, Accept",
+          },
+        }
+      );
+
+      const data = await response.json();
+      wholeData = data.Data;
+      this.setState({
+        dataList: wholeData,
+        isLoading: false,
+      });
+
+      //setTimeout(function () {
+      document.getElementById("mainButtonClicked").click();
+      //  }, 1000);
+
+      //REFRESH PAGE AFTER 15 Sec
+      setTimeout(function () {
+        window.location.reload();
+      }, 15000);
+    } catch (error) {
+      console.error(error);
+      this.setState({
+        isLoading: false,
       });
     } finally {
     }
@@ -333,7 +436,7 @@ class App extends React.Component {
                 disabled={this.state.isManualButtonLoading}
                 onClick={() =>
                   !this.state.isManualButtonLoading
-                    ? this.gettingStarted()
+                    ? this.gettingManuallyStarted()
                     : null
                 }
               >
