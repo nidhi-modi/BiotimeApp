@@ -55,7 +55,7 @@ class App extends React.Component {
     //DEMO
 
     const currentTime = new Date().getTime(); //current unix timestamp
-    const execTime = new Date().setHours(14, 45, 0, 0); //API call time = today at 24:00
+    const execTime = new Date().setHours(0, 0, 0, 0); //API call time = today at 24:00
 
     let timeLeft;
     if (currentTime < execTime) {
@@ -66,8 +66,6 @@ class App extends React.Component {
       timeLeft = execTime + 86400000 - currentTime;
     }
     setTimeout(() => {
-
-      console.log("This is called");
       this.gettingStarted();
     }, timeLeft);
 
@@ -269,8 +267,6 @@ class App extends React.Component {
     this.setState({
       isLoading: false,
     });
-
-    console.log("API is called");
 
     try {
       const paycodeResponse = await fetch(
