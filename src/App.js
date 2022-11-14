@@ -55,7 +55,7 @@ class App extends React.Component {
     //DEMO
 
     const currentTime = new Date().getTime(); //current unix timestamp
-    const execTime = new Date().setHours(9, 30, 0, 0); //API call time = today at 24:00
+    const execTime = new Date().setHours(10, 15, 0, 0); //API call time = today at 24:00
 
     let timeLeft;
     if (currentTime < execTime) {
@@ -65,9 +65,16 @@ class App extends React.Component {
       //it's currently later than 20:00, schedule for tomorrow at 20:00
       timeLeft = execTime + 86400000 - currentTime;
     }
-    setTimeout(() => {
-      this.gettingStarted();
+
+    setTimeout(function () {
+      setInterval(function () {
+        this.gettingStarted();
+        console.log("Calling API");
+      }, 86400000); //repeat every 24h
     }, timeLeft);
+    /*setTimeout(() => {
+      this.gettingStarted();
+    }, timeLeft);*/
 
     console.log(timeLeft);
   }
