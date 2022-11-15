@@ -260,7 +260,8 @@ class App extends React.Component {
 
       //REFRESH PAGE AFTER 15 Sec
       setTimeout(function () {
-        window.location.reload();
+        //window.location.reload();
+        this.setState({ dataList: [] });
       }, 15000);
     } catch (error) {
       console.error(error);
@@ -341,7 +342,8 @@ class App extends React.Component {
 
       //REFRESH PAGE AFTER 15 Sec
       setTimeout(function () {
-        window.location.reload();
+        //window.location.reload();
+        this.setState({ dataList: [] });
       }, 15000);
     } catch (error) {
       console.error(error);
