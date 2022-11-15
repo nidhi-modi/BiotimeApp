@@ -55,7 +55,7 @@ class App extends React.Component {
     //DEMO
 
     const currentTime = new Date().getTime(); //current unix timestamp
-    const execTime = new Date().setHours(12, 25, 0, 0); //API call time = today at 24:00
+    const execTime = new Date().setHours(12, 45, 0, 0); //API call time = today at 24:00
 
     let timeLeft;
     if (currentTime < execTime) {
@@ -75,7 +75,7 @@ class App extends React.Component {
       this.gettingStarted();
     }, timeLeft);*/
 
-    console.log("tIME lEFT : " + timeLeft);
+    console.log("TIME LEFT : " + timeLeft);
   }
 
   gettingStarted = () => {
