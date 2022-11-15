@@ -55,7 +55,7 @@ class App extends React.Component {
     //DEMO
 
     const currentTime = new Date().getTime(); //current unix timestamp
-    const execTime = new Date().setHours(11, 10, 0, 0); //API call time = today at 24:00
+    const execTime = new Date().setHours(12, 15, 0, 0); //API call time = today at 24:00
 
     let timeLeft;
     if (currentTime < execTime) {
@@ -67,8 +67,7 @@ class App extends React.Component {
     }
 
     setTimeout(function () {
-      this.gettingStarted();
-      console.log("Calling API");
+      console.log("Calling Timeout");
       setInterval(function () {
         this.gettingStarted();
         console.log("Calling API");
