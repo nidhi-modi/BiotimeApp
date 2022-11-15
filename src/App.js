@@ -54,15 +54,8 @@ class App extends React.Component {
 
     //DEMO
 
-    this.gettingStarted();
-    const interval = setInterval(() => {
-      this.gettingStarted();
-    }, 36000000);
-
-    console.log("INTERVAL TIME : " + interval);
-
-    /*const currentTime = new Date().getTime(); //current unix timestamp
-    const execTime = new Date().setHours(10, 30, 0, 0); //API call time = today at 24:00
+    const currentTime = new Date().getTime(); //current unix timestamp
+    const execTime = new Date().setHours(11, 10, 0, 0); //API call time = today at 24:00
 
     let timeLeft;
     if (currentTime < execTime) {
@@ -73,11 +66,19 @@ class App extends React.Component {
       timeLeft = execTime + 86400000 - currentTime;
     }
 
-    setTimeout(() => {
+    setTimeout(function () {
       this.gettingStarted();
+      console.log("Calling API");
+      setInterval(function () {
+        this.gettingStarted();
+        console.log("Calling API");
+      }, 86400000); //repeat every 24h
     }, timeLeft);
+    /*setTimeout(() => {
+      this.gettingStarted();
+    }, timeLeft);*/
 
-    console.log(timeLeft);*/
+    console.log(timeLeft);
   }
 
   gettingStarted = () => {
@@ -259,9 +260,9 @@ class App extends React.Component {
       }, 1000);
 
       //REFRESH PAGE AFTER 15 Sec
-      /*setTimeout(function () {
+      setTimeout(function () {
         window.location.reload();
-      }, 15000);*/
+      }, 15000);
     } catch (error) {
       console.error(error);
       this.setState({
@@ -340,9 +341,9 @@ class App extends React.Component {
       }, 1000);
 
       //REFRESH PAGE AFTER 15 Sec
-      /*setTimeout(function () {
+      setTimeout(function () {
         window.location.reload();
-      }, 15000);*/
+      }, 15000);
     } catch (error) {
       console.error(error);
       this.setState({
