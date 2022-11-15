@@ -59,7 +59,7 @@ class App extends React.Component {
       this.gettingStarted();
     }, 36000000);
 
-    console.log("INTERVAL  : " + interval);
+    console.log("INTERVAL TIME : " + interval);
 
     /*const currentTime = new Date().getTime(); //current unix timestamp
     const execTime = new Date().setHours(10, 30, 0, 0); //API call time = today at 24:00
@@ -259,10 +259,9 @@ class App extends React.Component {
       }, 1000);
 
       //REFRESH PAGE AFTER 15 Sec
-      setTimeout(function () {
-        //window.location.reload();
-        this.setState({ dataList: [] });
-      }, 15000);
+      /*setTimeout(function () {
+        window.location.reload();
+      }, 15000);*/
     } catch (error) {
       console.error(error);
       this.setState({
@@ -341,10 +340,9 @@ class App extends React.Component {
       }, 1000);
 
       //REFRESH PAGE AFTER 15 Sec
-      setTimeout(function () {
-        //window.location.reload();
-        this.setState({ dataList: [] });
-      }, 15000);
+      /*setTimeout(function () {
+        window.location.reload();
+      }, 15000);*/
     } catch (error) {
       console.error(error);
       this.setState({
