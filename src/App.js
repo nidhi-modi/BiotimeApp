@@ -60,7 +60,7 @@ class App extends React.Component {
 
     //CURRENT WEEK CALLING
     const currentTime = new Date().getTime(); //current unix timestamp
-    const execTime = new Date().setHours(14, 15, 0, 0); //API call time = today at 24:00
+    const execTime = new Date().setHours(15, 15, 0, 0); //API call time = today at 24:00
 
     let timeLeft;
     if (currentTime < execTime) {
@@ -73,7 +73,7 @@ class App extends React.Component {
 
     //PREVIOUS WEEK CALLING
     const currentTime1 = new Date().getTime(); //current unix timestamp
-    const execTime1 = new Date().setHours(14, 20, 0, 0); //API call time = today at 24:00
+    const execTime1 = new Date().setHours(15, 20, 0, 0); //API call time = today at 24:00
 
     let timeLeft1;
     if (currentTime1 < execTime1) {
@@ -102,9 +102,7 @@ class App extends React.Component {
       this.gettingStartedPrevious();
     }, timeLeft1);
 
-    console.log(
-      "Time left now: " + timeLeft + " Time for other API  : " + timeLeft1
-    );
+    console.log("Time 1: " + timeLeft + " Time 2: " + timeLeft1);
   }
 
   gettingStartedPrevious = () => {
@@ -140,6 +138,26 @@ class App extends React.Component {
   };
 
   gettingManuallyStarted = () => {
+    //SETUP_TESTS
+
+    //CURRENT WEEK
+    var weekNumber = moment().week() - 1;
+    var yearNumber = moment().year();
+    var toText = yearNumber.toString(); //convert to string
+    var lastChar = toText.slice(-2); //gets last character
+    var lastDigit = +lastChar; //convert last character to number
+    var weekNumberText = lastDigit + "00";
+    var convertWeekNumber = +weekNumberText;
+    var completeWeekNumber = convertWeekNumber + weekNumber;
+
+    //FILE NAME
+    const fileNameWithTimestamp = "Biotime-" + currentWeekNumber;
+
+    this.setState({
+      isoWeek: completeWeekNumber,
+      fileName: fileNameWithTimestamp,
+    });
+    //
     //Loading for button
     this.setState({ isManualButtonLoading: true });
 
@@ -154,6 +172,45 @@ class App extends React.Component {
     const formattedEndDate = moment(endDate).format("yyyy-MM-DD");
 
     this.getManuallyEmployees(formattedStartDate, formattedEndDate);
+  };
+
+  gettingManuallyStartedPrevious = () => {
+    //SETUP_TESTS
+    //CURRENT WEEK
+    var weekNumber = moment().week() - 1;
+    var yearNumber = moment().year();
+    var toText = yearNumber.toString(); //convert to string
+    var lastChar = toText.slice(-2); //gets last character
+    var lastDigit = +lastChar; //convert last character to number
+    var weekNumberText = lastDigit + "00";
+    var convertWeekNumber = +weekNumberText;
+
+    //PREVIOUS WEEK
+    var previousWeekNumber = moment().week() - 2;
+    var previousCompleteWkNo = convertWeekNumber + previousWeekNumber;
+
+    //FILE NAME
+    const fileNameWithTimestampPrevious = "Biotime-" + lastWeekNum;
+    //
+
+    this.setState({
+      isoWeek: previousCompleteWkNo,
+      fileName: fileNameWithTimestampPrevious,
+    });
+    //Loading for button
+    this.setState({ isManualButtonLoading: true });
+
+    var weekNumber = moment().week() - 2;
+    var yearNumber = moment().year();
+
+    //2016-01-01
+    const startDate = this.getStartDateOfWeek(weekNumber, yearNumber);
+    const endDate = this.getEndDateOfWeek(weekNumber, yearNumber);
+
+    const formattedStartDate = moment(startDate).format("yyyy-MM-DD");
+    const formattedEndDate = moment(endDate).format("yyyy-MM-DD");
+
+    this.getManuallyEmployeesPrevious(formattedStartDate, formattedEndDate);
   };
 
   employees = () => {
@@ -315,7 +372,7 @@ class App extends React.Component {
     }
   };
 
-  getManuallyEmployees = async (startDate, endDate) => {
+  getManuallyEmployeesPrevious = async (startDate, endDate) => {
     this.setState({
       isManualButtonLoading: true,
     });
@@ -396,6 +453,87 @@ class App extends React.Component {
     }
   };
 
+  getManuallyEmployees = async (startDate, endDate) => {
+    this.setState({
+      isManualButtonLoading: true,
+    });
+
+    try {
+      const paycodeResponse = await fetch(
+        `https://tandg.mybiotime.com/api/paycode`,
+        {
+          method: "GET",
+          //mode: "cors",
+          headers: {
+            Authorization: "Basic " + base64.encode(username + ":" + password),
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "Access-Control-Allow-Headers":
+              "Origin, X-Requested-With, Content-Type, Accept",
+          },
+        }
+      );
+
+      const paycodeData = await paycodeResponse.json();
+      payCodeWholeData = paycodeData.Data;
+      this.setState({
+        paycodeList: payCodeWholeData,
+        isManualButtonLoading: true,
+      });
+    } catch (error) {
+      console.error(error);
+      this.setState({
+        isManualButtonLoading: false,
+      });
+    } finally {
+    }
+
+    //PAYCODE
+    this.setState({
+      isManualButtonLoading: true,
+    });
+    try {
+      const response = await fetch(
+        `https://tandg.mybiotime.com/api/pay?filter=wlevel1 eq 2200 and date ge '${startDate}' and date le '${endDate}' and wcostcentre in('36412','36411','36416','36417')`,
+        {
+          method: "GET",
+          //mode: "cors",
+          headers: {
+            Authorization: "Basic " + base64.encode(username + ":" + password),
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "Access-Control-Allow-Headers":
+              "Origin, X-Requested-With, Content-Type, Accept",
+          },
+        }
+      );
+
+      const data = await response.json();
+      wholeData = data.Data;
+      this.setState({
+        dataList: wholeData,
+        isManualButtonLoading: false,
+      });
+
+      setTimeout(function () {
+        document.getElementById("mainButtonClicked").click();
+      }, 500);
+
+      //REFRESH PAGE AFTER 15 Sec
+      setTimeout(() => {
+        this.gettingManuallyStartedPrevious();
+      }, 15000);
+    } catch (error) {
+      console.error(error);
+      this.setState({
+        isManualButtonLoading: false,
+      });
+    } finally {
+    }
+  };
+
   getEmployees = async (startDate, endDate) => {
     this.setState({
       isLoading: false,
@@ -462,7 +600,7 @@ class App extends React.Component {
 
       setTimeout(function () {
         document.getElementById("mainButtonClicked").click();
-      }, 1000);
+      }, 500);
 
       //REFRESH PAGE AFTER 15 Sec
       setTimeout(function () {
