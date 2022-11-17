@@ -60,7 +60,7 @@ class App extends React.Component {
 
     //CURRENT WEEK CALLING
     const currentTime = new Date().getTime(); //current unix timestamp
-    const execTime = new Date().setHours(15, 15, 0, 0); //API call time = today at 24:00
+    const execTime = new Date().setHours(0, 0, 0, 0); //API call time = today at 24:00
 
     let timeLeft;
     if (currentTime < execTime) {
@@ -73,7 +73,7 @@ class App extends React.Component {
 
     //PREVIOUS WEEK CALLING
     const currentTime1 = new Date().getTime(); //current unix timestamp
-    const execTime1 = new Date().setHours(15, 20, 0, 0); //API call time = today at 24:00
+    const execTime1 = new Date().setHours(0, 5, 0, 0); //API call time = today at 24:00
 
     let timeLeft1;
     if (currentTime1 < execTime1) {
@@ -102,7 +102,10 @@ class App extends React.Component {
       this.gettingStartedPrevious();
     }, timeLeft1);
 
-    console.log("Time 1: " + timeLeft + " Time 2: " + timeLeft1);
+    console.log("Current Week: " + timeLeft + " Last week: " + timeLeft1);
+    console.log(
+      "API calls are done @12am and the other one is called @12:05am"
+    );
   }
 
   gettingStartedPrevious = () => {
