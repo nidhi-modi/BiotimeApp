@@ -27,15 +27,18 @@ class App extends React.Component {
     this.state = {
       employees: [],
       fileName: "",
+      previousWkFileName: "",
       dataList: [],
       paycodeList: [],
       isLoading: false,
       isoWeek: "",
+      previousIsoWeek: "",
       isManualButtonLoading: false,
     };
   }
 
   componentDidMount() {
+    //CURRENT WEEK
     var weekNumber = moment().week() - 1;
     var yearNumber = moment().year();
     var toText = yearNumber.toString(); //convert to string
@@ -45,17 +48,19 @@ class App extends React.Component {
     var convertWeekNumber = +weekNumberText;
     var completeWeekNumber = convertWeekNumber + weekNumber;
 
-    const fileNameWithTimestamp = "Biotime-" + currentWeekNumber;
+    //PREVIOUS WEEK
+    var previousWeekNumber = moment().week() - 2;
+    var previousCompleteWkNo = convertWeekNumber + previousWeekNumber;
 
-    this.setState({
-      fileName: fileNameWithTimestamp,
-      isoWeek: completeWeekNumber,
-    });
+    //FILE NAME
+    const fileNameWithTimestamp = "Biotime-" + currentWeekNumber;
+    const fileNameWithTimestampPrevious = "Biotime-" + lastWeekNum;
 
     //DEMO
 
+    //CURRENT WEEK CALLING
     const currentTime = new Date().getTime(); //current unix timestamp
-    const execTime = new Date().setHours(12, 45, 0, 0); //API call time = today at 24:00
+    const execTime = new Date().setHours(14, 15, 0, 0); //API call time = today at 24:00
 
     let timeLeft;
     if (currentTime < execTime) {
@@ -66,17 +71,57 @@ class App extends React.Component {
       timeLeft = execTime + 86400000 - currentTime;
     }
 
-    setTimeout(function () {
+    //PREVIOUS WEEK CALLING
+    const currentTime1 = new Date().getTime(); //current unix timestamp
+    const execTime1 = new Date().setHours(14, 20, 0, 0); //API call time = today at 24:00
+
+    let timeLeft1;
+    if (currentTime1 < execTime1) {
+      //it's currently earlier than 20:00
+      timeLeft1 = execTime1 - currentTime1;
+    } else {
+      //it's currently later than 20:00, schedule for tomorrow at 20:00
+      timeLeft1 = execTime1 + 86400000 - currentTime1;
+    }
+
+    setTimeout(() => {
+      console.log("Current Week");
+      this.setState({
+        isoWeek: completeWeekNumber,
+        fileName: fileNameWithTimestamp,
+      });
       this.gettingStarted();
-      console.log("Calling API");
     }, timeLeft);
 
-    /*setTimeout(() => {
-      this.gettingStarted();
-    }, timeLeft);*/
+    setTimeout(() => {
+      console.log("Last Week");
+      this.setState({
+        isoWeek: previousCompleteWkNo,
+        fileName: fileNameWithTimestampPrevious,
+      });
+      this.gettingStartedPrevious();
+    }, timeLeft1);
 
-    console.log("TIME LEFT : " + timeLeft);
+    console.log(
+      "Time left now: " + timeLeft + " Time for other API  : " + timeLeft1
+    );
   }
+
+  gettingStartedPrevious = () => {
+    //Loading for button
+    this.setState({ isLoading: true });
+    var weekNumber = moment().week() - 2;
+    var yearNumber = moment().year();
+
+    //2016-01-01
+    const startDate = this.getStartDateOfWeek(weekNumber, yearNumber);
+    const endDate = this.getEndDateOfWeek(weekNumber, yearNumber);
+
+    const formattedStartDate = moment(startDate).format("yyyy-MM-DD");
+    const formattedEndDate = moment(endDate).format("yyyy-MM-DD");
+
+    this.getEmployeesPrevious(formattedStartDate, formattedEndDate);
+  };
 
   gettingStarted = () => {
     //Loading for button
@@ -186,6 +231,88 @@ class App extends React.Component {
     }
 
     return exactHoursWorked;
+  };
+
+  getEmployeesPrevious = async (startDate, endDate) => {
+    console.log("Start : " + startDate + " End : " + endDate);
+    this.setState({
+      isLoading: false,
+    });
+
+    try {
+      const paycodeResponse = await fetch(
+        `https://tandg.mybiotime.com/api/paycode`,
+        {
+          method: "GET",
+          //mode: "cors",
+          headers: {
+            Authorization: "Basic " + base64.encode(username + ":" + password),
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "Access-Control-Allow-Headers":
+              "Origin, X-Requested-With, Content-Type, Accept",
+          },
+        }
+      );
+
+      const paycodeData = await paycodeResponse.json();
+      payCodeWholeData = paycodeData.Data;
+      this.setState({
+        paycodeList: payCodeWholeData,
+        isLoading: true,
+      });
+    } catch (error) {
+      console.error(error);
+      this.setState({
+        isLoading: false,
+      });
+    } finally {
+    }
+
+    //PAYCODE
+    this.setState({
+      isLoading: true,
+    });
+    try {
+      const response = await fetch(
+        `https://tandg.mybiotime.com/api/pay?filter=wlevel1 eq 2200 and date ge '${startDate}' and date le '${endDate}' and wcostcentre in('36412','36411','36416','36417')`,
+        {
+          method: "GET",
+          //mode: "cors",
+          headers: {
+            Authorization: "Basic " + base64.encode(username + ":" + password),
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            "Access-Control-Allow-Headers":
+              "Origin, X-Requested-With, Content-Type, Accept",
+          },
+        }
+      );
+
+      const data = await response.json();
+      wholeData = data.Data;
+      this.setState({
+        dataList: wholeData,
+        isLoading: false,
+      });
+
+      setTimeout(function () {
+        document.getElementById("mainButtonClicked").click();
+      }, 1000);
+
+      //REFRESH PAGE AFTER 15 Sec
+      setTimeout(function () {
+        window.location.reload();
+      }, 15000);
+    } catch (error) {
+      console.error(error);
+      this.setState({
+        isLoading: false,
+      });
+    } finally {
+    }
   };
 
   getManuallyEmployees = async (startDate, endDate) => {
