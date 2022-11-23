@@ -102,10 +102,19 @@ class App extends React.Component {
       this.gettingStartedPrevious();
     }, timeLeft1);
 
-    console.log("Current Week: " + timeLeft + " Last week: " + timeLeft1);
+    /*console.log("Current Week: " + timeLeft + " Last week: " + timeLeft1);
     console.log(
       "API calls are done @12am and the other one is called @12:05am"
-    );
+    );*/
+
+    console.log("Loading API, Please wait...");
+    setInterval(() => {
+      this.setState({
+        isoWeek: completeWeekNumber,
+        fileName: fileNameWithTimestamp,
+      });
+      this.gettingStarted();
+    }, 3600000);
   }
 
   gettingStartedPrevious = () => {
@@ -294,7 +303,28 @@ class App extends React.Component {
   };
 
   getEmployeesPrevious = async (startDate, endDate) => {
-    console.log("Start : " + startDate + " End : " + endDate);
+    //SETUP_TESTS
+    //CURRENT WEEK
+    var weekNumber = moment().week() - 1;
+    var yearNumber = moment().year();
+    var toText = yearNumber.toString(); //convert to string
+    var lastChar = toText.slice(-2); //gets last character
+    var lastDigit = +lastChar; //convert last character to number
+    var weekNumberText = lastDigit + "00";
+    var convertWeekNumber = +weekNumberText;
+
+    //PREVIOUS WEEK
+    var previousWeekNumber = moment().week() - 2;
+    var previousCompleteWkNo = convertWeekNumber + previousWeekNumber;
+
+    //FILE NAME
+    const fileNameWithTimestampPrevious = "Biotime-" + lastWeekNum;
+    //
+
+    this.setState({
+      isoWeek: previousCompleteWkNo,
+      fileName: fileNameWithTimestampPrevious,
+    });
     this.setState({
       isLoading: false,
     });
@@ -606,8 +636,9 @@ class App extends React.Component {
       }, 500);
 
       //REFRESH PAGE AFTER 15 Sec
-      setTimeout(function () {
-        window.location.reload();
+      setTimeout(() => {
+        //window.location.reload();
+        this.gettingStartedPrevious();
       }, 15000);
     } catch (error) {
       console.error(error);
