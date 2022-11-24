@@ -84,7 +84,7 @@ class App extends React.Component {
       timeLeft1 = execTime1 + 86400000 - currentTime1;
     }
 
-    setTimeout(() => {
+    /*setTimeout(() => {
       console.log("Current Week");
       this.setState({
         isoWeek: completeWeekNumber,
@@ -102,7 +102,7 @@ class App extends React.Component {
       this.gettingStartedPrevious();
     }, timeLeft1);
 
-    /*console.log("Current Week: " + timeLeft + " Last week: " + timeLeft1);
+    console.log("Current Week: " + timeLeft + " Last week: " + timeLeft1);
     console.log(
       "API calls are done @12am and the other one is called @12:05am"
     );*/
