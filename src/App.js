@@ -39,7 +39,7 @@ class App extends React.Component {
 
   componentDidMount() {
     //CURRENT WEEK
-    var weekNumber = moment().week() - 1;
+    var weekNumber = moment().week();
     var yearNumber = moment().year();
     var toText = yearNumber.toString(); //convert to string
     var lastChar = toText.slice(-2); //gets last character
@@ -49,7 +49,7 @@ class App extends React.Component {
     var completeWeekNumber = convertWeekNumber + weekNumber;
 
     //PREVIOUS WEEK
-    var previousWeekNumber = moment().week() - 2;
+    var previousWeekNumber = moment().week() - 1;
     var previousCompleteWkNo = convertWeekNumber + previousWeekNumber;
 
     //FILE NAME
@@ -120,7 +120,7 @@ class App extends React.Component {
   gettingStartedPrevious = () => {
     //Loading for button
     this.setState({ isLoading: true });
-    var weekNumber = moment().week() - 2;
+    var weekNumber = moment().week() - 1;
     var yearNumber = moment().year();
 
     //2016-01-01
@@ -136,7 +136,7 @@ class App extends React.Component {
   gettingStarted = () => {
     //Loading for button
     this.setState({ isLoading: true });
-    var weekNumber = moment().week() - 1;
+    var weekNumber = moment().week();
     var yearNumber = moment().year();
 
     //2016-01-01
@@ -153,7 +153,7 @@ class App extends React.Component {
     //SETUP_TESTS
 
     //CURRENT WEEK
-    var weekNumber = moment().week() - 1;
+    var weekNumber = moment().week();
     var yearNumber = moment().year();
     var toText = yearNumber.toString(); //convert to string
     var lastChar = toText.slice(-2); //gets last character
@@ -173,7 +173,7 @@ class App extends React.Component {
     //Loading for button
     this.setState({ isManualButtonLoading: true });
 
-    var weekNumber = moment().week() - 1;
+    var weekNumber = moment().week();
     var yearNumber = moment().year();
 
     //2016-01-01
@@ -189,7 +189,7 @@ class App extends React.Component {
   gettingManuallyStartedPrevious = () => {
     //SETUP_TESTS
     //CURRENT WEEK
-    var weekNumber = moment().week() - 1;
+    var weekNumber = moment().week();
     var yearNumber = moment().year();
     var toText = yearNumber.toString(); //convert to string
     var lastChar = toText.slice(-2); //gets last character
@@ -198,7 +198,7 @@ class App extends React.Component {
     var convertWeekNumber = +weekNumberText;
 
     //PREVIOUS WEEK
-    var previousWeekNumber = moment().week() - 2;
+    var previousWeekNumber = moment().week() - 1;
     var previousCompleteWkNo = convertWeekNumber + previousWeekNumber;
 
     //FILE NAME
@@ -212,7 +212,7 @@ class App extends React.Component {
     //Loading for button
     this.setState({ isManualButtonLoading: true });
 
-    var weekNumber = moment().week() - 2;
+    var weekNumber = moment().week() - 1;
     var yearNumber = moment().year();
 
     //2016-01-01
@@ -305,7 +305,7 @@ class App extends React.Component {
   getEmployeesPrevious = async (startDate, endDate) => {
     //SETUP_TESTS
     //CURRENT WEEK
-    var weekNumber = moment().week() - 1;
+    var weekNumber = moment().week();
     var yearNumber = moment().year();
     var toText = yearNumber.toString(); //convert to string
     var lastChar = toText.slice(-2); //gets last character
@@ -314,7 +314,7 @@ class App extends React.Component {
     var convertWeekNumber = +weekNumberText;
 
     //PREVIOUS WEEK
-    var previousWeekNumber = moment().week() - 2;
+    var previousWeekNumber = moment().week() - 1;
     var previousCompleteWkNo = convertWeekNumber + previousWeekNumber;
 
     //FILE NAME
@@ -684,15 +684,15 @@ class App extends React.Component {
   }
 
   getStartDateOfWeek(weekNumber, year) {
-    return new Date(year, 0, 3 + (weekNumber - 1) * 7);
+    return new Date(year, 0, 2 + (weekNumber - 1) * 7);
   }
 
   getEndDateOfWeek(weekNumber, year) {
-    return new Date(year, 0, 9 + (weekNumber - 1) * 7);
+    return new Date(year, 0, 8 + (weekNumber - 1) * 7);
   }
 
   getWeekNumbers() {
-    var weekNumber = moment().week() - 1;
+    var weekNumber = moment().week();
     var yearNumber = moment().year();
     var toText = yearNumber.toString(); //convert to string
     var lastChar = toText.slice(-2); //gets last character
