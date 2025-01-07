@@ -222,7 +222,7 @@ class App extends React.Component {
     console.log("Previous Year: " + yearNumber);
 
     //2016-01-01
-    const startDate = this.getStartDateOfWeek(weekNumber, yearNumber);
+    const startDate = this.getStartDateOfWeek(weekNumber, yearNumber - 1);
     const endDate = this.getEndDateOfWeek(weekNumber, yearNumber);
 
     const formattedStartDate = moment(startDate).format("yyyy-MM-DD");
