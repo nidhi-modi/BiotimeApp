@@ -657,45 +657,45 @@ class App extends React.Component {
     }
   };
 
-  // getDateFromLastWeek() {
-  //   this.setState({
-  //     isLoading: false,
-  //   });
-  //   var weekNumber = moment().week() - 3;
-  //   var yearNumber = moment().year;
+  getDateFromLastWeek() {
+    this.setState({
+      isLoading: false,
+    });
+    var weekNumber = moment().week() - 3;
+    var yearNumber = moment().year;
 
-  //   console.log("Previous Week: " + weekNumber);
-  //   console.log("Previous Year: " + yearNumber);
+    console.log("Previous Week: " + weekNumber);
+    console.log("Previous Year: " + yearNumber);
 
-  //   //2016-01-01
-  //   const startDate = this.getStartDateOfWeek(weekNumber, yearNumber);
-  //   const endDate = this.getEndDateOfWeek(weekNumber, yearNumber);
+    //2016-01-01
+    const startDate = this.getStartDateOfWeek(weekNumber, yearNumber);
+    const endDate = this.getEndDateOfWeek(weekNumber, yearNumber);
 
-  //   const formattedStartDate = moment(startDate).format("yyyy-MM-DD");
-  //   const formattedEndDate = moment(endDate).format("yyyy-MM-DD");
+    const formattedStartDate = moment(startDate).format("yyyy-MM-DD");
+    const formattedEndDate = moment(endDate).format("yyyy-MM-DD");
 
-  //   this.getEmployees(formattedStartDate, formattedEndDate);
-  // }
+    this.getEmployees(formattedStartDate, formattedEndDate);
+  }
 
-  // getDateFromThisWeek() {
-  //   this.setState({
-  //     isLoading: false,
-  //   });
-  //   var weekNumber = moment().week() - 2;
-  //   var yearNumber = moment().year();
+  getDateFromThisWeek() {
+    this.setState({
+      isLoading: false,
+    });
+    var weekNumber = moment().week() - 2;
+    var yearNumber = moment().year();
 
-  //   console.log("Current Week: " + weekNumber);
-  //   console.log("Current Year: " + yearNumber);
+    console.log("Current Week: " + weekNumber);
+    console.log("Current Year: " + yearNumber);
 
-  //   //2016-01-01
-  //   const startDate = this.getStartDateOfWeek(weekNumber, yearNumber);
-  //   const endDate = this.getEndDateOfWeek(weekNumber, yearNumber);
+    //2016-01-01
+    const startDate = this.getStartDateOfWeek(weekNumber, yearNumber);
+    const endDate = this.getEndDateOfWeek(weekNumber, yearNumber);
 
-  //   const formattedStartDate = moment(startDate).format("yyyy-MM-DD");
-  //   const formattedEndDate = moment(endDate).format("yyyy-MM-DD");
+    const formattedStartDate = moment(startDate).format("yyyy-MM-DD");
+    const formattedEndDate = moment(endDate).format("yyyy-MM-DD");
 
-  //   this.getEmployees(formattedStartDate, formattedEndDate);
-  // }
+    this.getEmployees(formattedStartDate, formattedEndDate);
+  }
 
   getStartDateOfWeek(weekNumber, year) {
     return new Date(year, 0, 30 + (weekNumber - 1) * 7);
