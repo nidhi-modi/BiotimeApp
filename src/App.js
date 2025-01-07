@@ -222,13 +222,15 @@ class App extends React.Component {
     console.log("Previous Year: " + yearNumber);
 
     //2016-01-01
-    const startDate = this.getStartDateOfWeek(1, 2024);
+    const startDate = this.getStartDateOfWeek(weekNumber, yearNumber);
     const endDate = this.getEndDateOfWeek(weekNumber, yearNumber);
 
     const formattedStartDate = moment(startDate).format("yyyy-MM-DD");
     const formattedEndDate = moment(endDate).format("yyyy-MM-DD");
 
     this.getManuallyEmployeesPrevious(formattedStartDate, formattedEndDate);
+
+    console.log("Hello?");
   };
 
   employees = () => {
