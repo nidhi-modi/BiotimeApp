@@ -228,7 +228,7 @@ class App extends React.Component {
     const formattedStartDate = moment(startDate).format("yyyy-MM-DD");
     const formattedEndDate = moment(endDate).format("yyyy-MM-DD");
 
-    this.getManuallyEmployeesPrevious(formattedStartDate, formattedStartDate);
+    this.getManuallyEmployeesPrevious(formattedStartDate, formattedEndDate);
   };
 
   employees = () => {
@@ -696,7 +696,7 @@ class App extends React.Component {
   // }
 
   getStartDateOfWeek(weekNumber, year) {
-    return new Date(year, 0, 30 + (weekNumber - 1) * 7);
+    return new Date(year, 12, 30 + (weekNumber - 1) * 7);
   }
 
   getEndDateOfWeek(weekNumber, year) {
