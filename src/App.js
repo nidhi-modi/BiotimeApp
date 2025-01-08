@@ -205,7 +205,7 @@ class App extends React.Component {
     var previousCompleteWkNo = convertWeekNumber + previousWeekNumber;
 
     //FILE NAME
-    const fileNameWithTimestampPrevious = "Biotime-2452";
+    const fileNameWithTimestampPrevious = "Biotime-" + previousWeekNumber;
     //
 
     this.setState({
@@ -228,7 +228,7 @@ class App extends React.Component {
     const formattedStartDate = moment(startDate).format("yyyy-MM-DD");
     const formattedEndDate = moment(endDate).format("yyyy-MM-DD");
 
-    this.getManuallyEmployeesPrevious("2024-12-23", "2024-12-29");
+    this.getManuallyEmployeesPrevious("2024-12-23", formattedEndDate);
 
     console.log("Hello?");
   };
@@ -702,7 +702,7 @@ class App extends React.Component {
   }
 
   getEndDateOfWeek(weekNumber, year) {
-    return new Date(year, 0, 5 + (weekNumber - 1) * 7);
+    return new Date(year, 0, 7 + (weekNumber - 1) * 7);
   }
 
   getWeekNumbers() {
