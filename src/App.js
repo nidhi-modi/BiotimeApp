@@ -698,11 +698,11 @@ class App extends React.Component {
   }
 
   getStartDateOfWeek(weekNumber, year) {
-    return new Date(year, 0, 1 + (weekNumber - 1) * 7);
+    return new Date(year, 0, 5 + (weekNumber - 1) * 7);
   }
 
   getEndDateOfWeek(weekNumber, year) {
-    return new Date(year, 0, 7 + (weekNumber - 1) * 7);
+    return new Date(year, 0, 12 + (weekNumber - 1) * 7);
   }
 
   getWeekNumbers() {
