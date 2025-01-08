@@ -130,7 +130,7 @@ class App extends React.Component {
     const formattedStartDate = moment(startDate).format("yyyy-MM-DD");
     const formattedEndDate = moment(endDate).format("yyyy-MM-DD");
 
-    this.getEmployeesPrevious(formattedStartDate, formattedEndDate);
+    this.getEmployeesPrevious("2024-12-30", "2025-01-05");
   };
 
   gettingStarted = () => {
@@ -146,7 +146,7 @@ class App extends React.Component {
     const formattedStartDate = moment(startDate).format("yyyy-MM-DD");
     const formattedEndDate = moment(endDate).format("yyyy-MM-DD");
 
-    this.getEmployees(formattedStartDate, formattedEndDate);
+    this.getEmployees("2025-01-06", "2025-01-12");
   };
 
   gettingManuallyStarted = () => {
@@ -186,7 +186,7 @@ class App extends React.Component {
     const formattedStartDate = moment(startDate).format("yyyy-MM-DD");
     const formattedEndDate = moment(endDate).format("yyyy-MM-DD");
 
-    this.getManuallyEmployees(formattedStartDate, formattedEndDate);
+    this.getManuallyEmployees("2025-01-06", "2025-01-12");
   };
 
   gettingManuallyStartedPrevious = () => {
@@ -228,7 +228,7 @@ class App extends React.Component {
     const formattedStartDate = moment(startDate).format("yyyy-MM-DD");
     const formattedEndDate = moment(endDate).format("yyyy-MM-DD");
 
-    this.getManuallyEmployeesPrevious("2024-12-23", formattedEndDate);
+    this.getManuallyEmployeesPrevious("2024-12-30", formattedEndDate);
 
     console.log("Hello?");
   };
