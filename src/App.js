@@ -205,7 +205,7 @@ class App extends React.Component {
     var previousCompleteWkNo = convertWeekNumber + previousWeekNumber;
 
     //FILE NAME
-    const fileNameWithTimestampPrevious = "Biotime-" + currentWeekNumber - 1;
+    const fileNameWithTimestampPrevious = "Biotime-" + previousCompleteWkNo;
     //
 
     this.setState({
