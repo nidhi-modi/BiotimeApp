@@ -37,20 +37,18 @@ class App extends React.Component {
     };
   }
 
-  componentDidMount() {
-    //CURRENT WEEK
-    var weekNumber = moment().week();
-    var yearNumber = moment().year();
-    var toText = yearNumber.toString(); //convert to string
-    var lastChar = toText.slice(-2); //gets last character
-    var lastDigit = +lastChar; //convert last character to number
-    var weekNumberText = lastDigit + "00";
-    var convertWeekNumber = +weekNumberText;
-    var completeWeekNumber = convertWeekNumber + weekNumber;
+  getISOWeekNumber = (date = moment()) => {
+  const year = date.isoWeekYear() % 100; // last 2 digits
+  const week = date.isoWeek();           // ISO week number
+  return year * 100 + week;              // YYWW
+  }; 
 
-    //PREVIOUS WEEK
-    var previousWeekNumber = moment().week() - 1;
-    var previousCompleteWkNo = convertWeekNumber + previousWeekNumber;
+  componentDidMount() {
+    //CURRENT WEEK & PREVIOUS WEEK NUMBER
+   const completeWeekNumber = this.getISOWeekNumber();
+   const previousCompleteWkNo = this.getISOWeekNumber(
+    moment().subtract(1, "week")
+  );
 
     //FILE NAME
     const fileNameWithTimestamp = "Biotime-" + currentWeekNumber;
@@ -153,14 +151,7 @@ class App extends React.Component {
     //SETUP_TESTS
 
     //CURRENT WEEK
-    var weekNumber = moment().week();
-    var yearNumber = moment().year();
-    var toText = yearNumber.toString(); //convert to string
-    var lastChar = toText.slice(-2); //gets last character
-    var lastDigit = +lastChar; //convert last character to number
-    var weekNumberText = lastDigit + "00";
-    var convertWeekNumber = +weekNumberText;
-    var completeWeekNumber = convertWeekNumber + weekNumber;
+    const completeWeekNumber = this.getISOWeekNumber();
 
     //FILE NAME
     const fileNameWithTimestamp = "Biotime-" + currentWeekNumber;
@@ -186,23 +177,18 @@ class App extends React.Component {
     const formattedStartDate = moment(startDate).format("yyyy-MM-DD");
     const formattedEndDate = moment(endDate).format("yyyy-MM-DD");
 
+    console.log("Start Date: " + formattedStartDate);
+    console.log("End Date: " + formattedEndDate);
+
     this.getManuallyEmployees(formattedStartDate, formattedEndDate);
   };
 
   gettingManuallyStartedPrevious = () => {
     //SETUP_TESTS
-    //CURRENT WEEK
-    var weekNumber = moment().week();
-    var yearNumber = moment().year();
-    var toText = yearNumber.toString(); //convert to string
-    var lastChar = toText.slice(-2); //gets last character
-    var lastDigit = +lastChar; //convert last character to number
-    var weekNumberText = lastDigit + "00";
-    var convertWeekNumber = +weekNumberText;
-
     //PREVIOUS WEEK
-    var previousWeekNumber = moment().week() - 1;
-    var previousCompleteWkNo = convertWeekNumber + previousWeekNumber;
+     const previousCompleteWkNo = this.getISOWeekNumber(
+      moment().subtract(1, "week")
+     );
 
     //FILE NAME
     const fileNameWithTimestampPrevious = "Biotime-" + previousCompleteWkNo;
@@ -312,18 +298,10 @@ class App extends React.Component {
 
   getEmployeesPrevious = async (startDate, endDate) => {
     //SETUP_TESTS
-    //CURRENT WEEK
-    var weekNumber = moment().week();
-    var yearNumber = moment().year();
-    var toText = yearNumber.toString(); //convert to string
-    var lastChar = toText.slice(-2); //gets last character
-    var lastDigit = +lastChar; //convert last character to number
-    var weekNumberText = lastDigit + "00";
-    var convertWeekNumber = +weekNumberText;
-
-    //PREVIOUS WEEK
-    var previousWeekNumber = moment().week() - 1;
-    var previousCompleteWkNo = convertWeekNumber + previousWeekNumber;
+   //PREVIOUS WEEK
+    const previousCompleteWkNo = this.getISOWeekNumber(
+      moment().subtract(1, "week")
+   );
 
     //FILE NAME
     const fileNameWithTimestampPrevious = "Biotime-" + lastWeekNum;
@@ -706,21 +684,10 @@ class App extends React.Component {
   }
 
   getWeekNumbers() {
-    var weekNumber = moment().week();
-    var yearNumber = moment().year();
-    var toText = yearNumber.toString(); //convert to string
-    var lastChar = toText.slice(-2); //gets last character
-    var lastDigit = +lastChar; //convert last character to number
-    var weekNumberText = lastDigit + "00";
-    var convertWeekNumber = +weekNumberText;
-    var completeWeekNumber = convertWeekNumber + weekNumber;
-    var lastWeekNumber = completeWeekNumber - 1;
-    var thisWeekNumber = lastWeekNumber - 1;
-
-    weekNum = thisWeekNumber;
-    lastWeekNum = lastWeekNumber;
-    currentWeekNumber = completeWeekNumber;
-  }
+    currentWeekNumber = this.getISOWeekNumber();
+    lastWeekNum = this.getISOWeekNumber(moment().subtract(1, "week"));
+    weekNum = this.getISOWeekNumber(moment().subtract(2, "week"));
+ }
 
   render() {
     return (
