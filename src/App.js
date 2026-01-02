@@ -675,13 +675,21 @@ class App extends React.Component {
     this.getEmployees(formattedStartDate, formattedEndDate);
   }
 
-  getStartDateOfWeek(weekNumber, year) {
-    return new Date(year, -1, 30 + (weekNumber - 1) * 7);
-  }
+getStartDateOfWeek(weekNumber, year) {
+  return moment()
+    .year(year)
+    .isoWeek(weekNumber)
+    .startOf("isoWeek")
+    .toDate(); // Monday
+}
 
-  getEndDateOfWeek(weekNumber, year) {
-    return new Date(year, 0, 5 + (weekNumber - 1) * 7);
-  }
+getEndDateOfWeek(weekNumber, year) {
+  return moment()
+    .year(year)
+    .isoWeek(weekNumber)
+    .endOf("isoWeek")
+    .toDate(); // Sunday
+}
 
   getWeekNumbers() {
     currentWeekNumber = this.getISOWeekNumber();
