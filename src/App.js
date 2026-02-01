@@ -118,8 +118,10 @@ class App extends React.Component {
   gettingStartedPrevious = () => {
     //Loading for button
     this.setState({ isLoading: true });
-    var weekNumber = moment().week() - 1;
-    var yearNumber = moment().year();
+
+    const m = moment().subtract(1, "week");
+    const weekNumber = m.isoWeek();
+    const yearNumber = m.isoWeekYear();
 
     //2016-01-01
     const startDate = this.getStartDateOfWeek(weekNumber, yearNumber);
@@ -134,8 +136,10 @@ class App extends React.Component {
   gettingStarted = () => {
     //Loading for button
     this.setState({ isLoading: true });
-    var weekNumber = moment().week();
-    var yearNumber = moment().year();
+
+    const m = moment();
+    const weekNumber = m.isoWeek();
+    const yearNumber = m.isoWeekYear();
 
     //2016-01-01
     const startDate = this.getStartDateOfWeek(weekNumber, yearNumber);
@@ -164,8 +168,9 @@ class App extends React.Component {
     //Loading for button
     this.setState({ isManualButtonLoading: true });
 
-    var weekNumber = moment().week();
-    var yearNumber = moment().year();
+    const m = moment();
+    var weekNumber = m.isoWeek();
+    var yearNumber = m.isoWeekYear();
 
     console.log("Current Week: " + weekNumber);
     console.log("Current Year: " + yearNumber);
@@ -201,8 +206,10 @@ class App extends React.Component {
     //Loading for button
     this.setState({ isManualButtonLoading: true });
 
-    var weekNumber = moment().week() - 1;
-    var yearNumber = moment().year();
+    const m = moment().subtract(1, "week");
+    var weekNumber = m.isoWeek();
+    var yearNumber = m.isoWeekYear();
+
 
     console.log("Previous Week: " + weekNumber);
     console.log("Previous Year: " + yearNumber);
@@ -655,47 +662,28 @@ class App extends React.Component {
     this.getEmployees(formattedStartDate, formattedEndDate);
   }
 
-  getDateFromThisWeek() {
-    this.setState({
-      isLoading: false,
-    });
-    var weekNumber = moment().week() - 2;
-    var yearNumber = moment().year();
-
-    console.log("Current Week: " + weekNumber);
-    console.log("Current Year: " + yearNumber);
-
-    //2016-01-01
-    const startDate = this.getStartDateOfWeek(weekNumber, yearNumber);
-    const endDate = this.getEndDateOfWeek(weekNumber, yearNumber);
-
-    const formattedStartDate = moment(startDate).format("yyyy-MM-DD");
-    const formattedEndDate = moment(endDate).format("yyyy-MM-DD");
-
-    this.getEmployees(formattedStartDate, formattedEndDate);
-  }
-
 getStartDateOfWeek(weekNumber, year) {
   return moment()
-    .year(year)
+    .isoWeekYear(year)
     .isoWeek(weekNumber)
     .startOf("isoWeek")
-    .toDate(); // Monday
+    .toDate();
 }
 
 getEndDateOfWeek(weekNumber, year) {
   return moment()
-    .year(year)
+    .isoWeekYear(year)
     .isoWeek(weekNumber)
     .endOf("isoWeek")
-    .toDate(); // Sunday
+    .toDate();
 }
 
-  getWeekNumbers() {
-    currentWeekNumber = this.getISOWeekNumber();
-    lastWeekNum = this.getISOWeekNumber(moment().subtract(1, "week"));
-    weekNum = this.getISOWeekNumber(moment().subtract(2, "week"));
- }
+
+getWeekNumbers() {
+  currentWeekNumber = this.getISOWeekNumber(moment());
+  lastWeekNum = this.getISOWeekNumber(moment().subtract(1, "week"));
+  weekNum = this.getISOWeekNumber(moment().subtract(2, "week"));
+}
 
   render() {
     return (
